@@ -46,26 +46,26 @@ class User extends Authenticatable
         ];
     }
 
-    // Penambahan: Relationship ke Mahasiswa (jika user adalah mahasiswa)
+    // Relasi ke mahasiswa (jika user adalah mahasiswa)
     public function mahasiswa()
     {
         return $this->hasOne(Mahasiswa::class);
     }
 
-    // Penambahan: Relationship ke Matkul yang diampu (jika user adalah dosen)
+    // Relasi ke mata kuliah yang diajar (jika user adalah dosen)
     public function matkuls()
     {
         return $this->hasMany(Matkul::class, 'dosen_id');
     }
 
-    // Penambahan: Helper method untuk cek role
+    // Helper method untuk cek role (tetap ada untuk kompatibilitas)
     public function isDosen()
     {
-        return $this->role === 'dosen';
+        return $this->role == 'dosen';
     }
 
     public function isMahasiswa()
     {
-        return $this->role === 'mahasiswa';
+        return $this->role == 'mahasiswa';
     }
 }

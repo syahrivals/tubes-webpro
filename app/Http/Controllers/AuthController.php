@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -15,31 +14,45 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        // Validasi input
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+        // Coba login
+        $email = $request->email;
+        $password = $request->password;
+        $remember = $request->has('remember');
+        
+        if (Auth::attempt(['email' => $email, 'password' => $password], $remember)) {
             $request->session()->regenerate();
             
-            // Redirect berdasarkan role
-            if (auth()->user()->isDosen()) {
+            // Cek role user dan redirect
+            $user = auth()->user();
+            if ($user->role == 'dosen') {
                 return redirect()->route('dosen.dashboard');
+            } else {
+                return redirect()->route('mahasiswa.dashboard');
             }
-            return redirect()->route('mahasiswa.dashboard');
         }
 
-        throw ValidationException::withMessages([
-            'email' => __('The provided credentials do not match our records.'),
+        // Jika login gagal, kembali dengan error
+        return back()->withErrors([
+            'email' => 'Email atau password salah',
         ]);
     }
 
     public function logout(Request $request)
     {
+        // Logout user
         Auth::logout();
+        
+        // Hapus session
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        
+        // Redirect ke halaman login
         return redirect()->route('login');
     }
 }

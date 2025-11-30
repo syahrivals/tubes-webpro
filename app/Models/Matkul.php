@@ -19,16 +19,19 @@ class Matkul extends Model
         'credits',
     ];
 
-    public function dosen(): BelongsTo
+    // Relasi ke dosen (user yang mengajar)
+    public function dosen()
     {
         return $this->belongsTo(User::class, 'dosen_id');
     }
 
-    public function mahasiswas(): BelongsToMany
+    // Relasi ke mahasiswa (banyak mahasiswa mengambil mata kuliah ini)
+    public function mahasiswas()
     {
         return $this->belongsToMany(Mahasiswa::class, 'enrollments');
     }
 
+    // Relasi ke presensi (banyak presensi untuk mata kuliah ini)
     public function presences()
     {
         return $this->hasMany(Presence::class);

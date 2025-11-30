@@ -4,35 +4,70 @@ namespace App\Http\Controllers\Dosen;
 
 use App\Http\Controllers\Controller;
 use App\Models\Matkul;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Enrollment;
+use App\Models\Presence;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $matkuls = auth()->user()->matkuls()->withCount('mahasiswas')->get();
-        $totalMahasiswa = DB::table('enrollments')
-            ->join('matkuls', 'enrollments.matkul_id', '=', 'matkuls.id')
-            ->where('matkuls.dosen_id', auth()->id())
-            ->distinct('enrollments.mahasiswa_id')
-            ->count('enrollments.mahasiswa_id');
-
+        // Ambil semua mata kuliah yang diajar dosen ini
+        $user = auth()->user();
+        $matkuls = Matkul::where('dosen_id', $user->id)->get();
+        
+        // Hitung total mahasiswa unik dari semua mata kuliah
+        $totalMahasiswa = 0;
+        $mahasiswaIds = [];
+        
+        foreach ($matkuls as $matkul) {
+            // Ambil semua enrollment untuk mata kuliah ini
+            $enrollments = Enrollment::where('matkul_id', $matkul->id)->get();
+            
+            foreach ($enrollments as $enrollment) {
+                // Simpan ID mahasiswa jika belum ada
+                if (!in_array($enrollment->mahasiswa_id, $mahasiswaIds)) {
+                    $mahasiswaIds[] = $enrollment->mahasiswa_id;
+                    $totalMahasiswa++;
+                }
+            }
+        }
+        
+        // Hitung persentase kehadiran untuk setiap mata kuliah
         $attendanceStats = [];
         $chartLabels = [];
         $chartData = [];
+        $mahasiswaCounts = [];
         
         foreach ($matkuls as $matkul) {
-            $totalPresences = $matkul->presences()->count();
-            $hadir = $matkul->presences()->where('status', 'hadir')->count();
-            $percentage = $totalPresences > 0 ? round(($hadir / $totalPresences) * 100, 2) : 0;
+            // Hitung jumlah mahasiswa di mata kuliah ini
+            $enrollments = Enrollment::where('matkul_id', $matkul->id)->get();
+            $mahasiswaCounts[$matkul->id] = count($enrollments);
+            
+            // Ambil semua presensi untuk mata kuliah ini
+            $allPresences = Presence::where('matkul_id', $matkul->id)->get();
+            $totalPresences = count($allPresences);
+            
+            // Hitung yang hadir
+            $hadir = 0;
+            foreach ($allPresences as $presence) {
+                if ($presence->status == 'hadir') {
+                    $hadir++;
+                }
+            }
+            
+            // Hitung persentase
+            if ($totalPresences > 0) {
+                $percentage = round(($hadir / $totalPresences) * 100, 2);
+            } else {
+                $percentage = 0;
+            }
             
             $attendanceStats[$matkul->id] = $percentage;
             $chartLabels[] = $matkul->kode;
             $chartData[] = $percentage;
         }
 
-        return view('dosen.dashboard', compact('matkuls', 'totalMahasiswa', 'attendanceStats', 'chartLabels', 'chartData'));
+        return view('dosen.dashboard', compact('matkuls', 'totalMahasiswa', 'attendanceStats', 'chartLabels', 'chartData', 'mahasiswaCounts'));
     }
 }
 

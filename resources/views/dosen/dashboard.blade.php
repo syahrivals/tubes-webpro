@@ -58,7 +58,7 @@
                     <tr>
                         <td>{{ $matkul->kode }}</td>
                         <td>{{ $matkul->nama }}</td>
-                        <td>{{ $matkul->mahasiswas_count }}</td>
+                        <td>{{ $mahasiswaCounts[$matkul->id] ?? 0 }}</td>
                         <td>{{ $attendanceStats[$matkul->id] ?? 0 }}%</td>
                         <td>
                             <a href="{{ route('presences.index', ['matkul_id' => $matkul->id]) }}" 
