@@ -8,58 +8,68 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
         $mahasiswa = $user->mahasiswa;
         
         $matkuls = $mahasiswa->matkuls;
         
-        $attendanceData = [];
+        $selectedMatkulId = $request->get('matkul_id');
         
-        foreach ($matkuls as $matkul) {
-            $allPresences = Presence::where('matkul_id', $matkul->id)
-                ->where('mahasiswa_id', $mahasiswa->id)
-                ->orderBy('tanggal', 'desc')
-                ->get();
+        if (!$selectedMatkulId && $matkuls->count() > 0) {
+            $selectedMatkulId = $matkuls->first()->id;
+        }
+        
+        $selectedData = null;
+        
+        if ($selectedMatkulId) {
+            $selectedMatkul = $matkuls->firstWhere('id', $selectedMatkulId);
             
-            $hadir = 0;
-            $izin = 0;
-            $sakit = 0;
-            $alpha = 0;
-            
-            foreach ($allPresences as $presence) {
-                if ($presence->status == 'hadir') {
-                    $hadir++;
-                } elseif ($presence->status == 'izin') {
-                    $izin++;
-                } elseif ($presence->status == 'sakit') {
-                    $sakit++;
-                } elseif ($presence->status == 'alpha') {
-                    $alpha++;
+            if ($selectedMatkul) {
+                $allPresences = Presence::where('matkul_id', $selectedMatkul->id)
+                    ->where('mahasiswa_id', $mahasiswa->id)
+                    ->orderBy('tanggal', 'desc')
+                    ->get();
+                
+                $hadir = 0;
+                $izin = 0;
+                $sakit = 0;
+                $alpha = 0;
+                
+                foreach ($allPresences as $presence) {
+                    if ($presence->status == 'hadir') {
+                        $hadir++;
+                    } elseif ($presence->status == 'izin') {
+                        $izin++;
+                    } elseif ($presence->status == 'sakit') {
+                        $sakit++;
+                    } elseif ($presence->status == 'alpha') {
+                        $alpha++;
+                    }
                 }
+                
+                $total = count($allPresences);
+                if ($total > 0) {
+                    $percentage = round(($hadir / $total) * 100, 2);
+                } else {
+                    $percentage = 0;
+                }
+                
+                $selectedData = [
+                    'matkul' => $selectedMatkul,
+                    'hadir' => $hadir,
+                    'izin' => $izin,
+                    'sakit' => $sakit,
+                    'alpha' => $alpha,
+                    'total' => $total,
+                    'percentage' => $percentage,
+                    'presences' => $allPresences,
+                ];
             }
-            
-            $total = count($allPresences);
-            if ($total > 0) {
-                $percentage = round(($hadir / $total) * 100, 2);
-            } else {
-                $percentage = 0;
-            }
-            
-            $attendanceData[$matkul->id] = [
-                'matkul' => $matkul,
-                'hadir' => $hadir,
-                'izin' => $izin,
-                'sakit' => $sakit,
-                'alpha' => $alpha,
-                'total' => $total,
-                'percentage' => $percentage,
-                'presences' => $allPresences,
-            ];
         }
 
-        return view('mahasiswa.dashboard', compact('mahasiswa', 'attendanceData'));
+        return view('mahasiswa.dashboard', compact('mahasiswa', 'matkuls', 'selectedData', 'selectedMatkulId'));
     }
 
     public function profile()
