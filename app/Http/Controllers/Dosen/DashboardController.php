@@ -54,7 +54,7 @@ class DashboardController extends Controller
             }
             
             $attendanceStats[$matkul->id] = $percentage;
-            $chartLabels[] = $matkul->kode;
+            $chartLabels[] = $matkul->nama;
             $chartData[] = $percentage;
         }
 
