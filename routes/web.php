@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Dosen\DashboardController as DosenDashboardController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
+use App\Http\Controllers\Mahasiswa\IzinController as MahasiswaIzinController;
 use App\Http\Controllers\PresenceController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +37,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [MahasiswaDashboardController::class, 'index'])->name('dashboard');
         Route::get('/profile', [MahasiswaDashboardController::class, 'profile'])->name('profile');
         Route::put('/profile', [MahasiswaDashboardController::class, 'updateProfile'])->name('profile.update');
+        Route::get('/izin', [MahasiswaIzinController::class, 'create'])->name('izin.create');
+        Route::post('/izin', [MahasiswaIzinController::class, 'store'])->name('izin.store');
     });
 
     Route::middleware('role:dosen')->group(function () {

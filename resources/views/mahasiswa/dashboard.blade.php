@@ -3,9 +3,14 @@
 @section('title', 'Dashboard Mahasiswa')
 
 @section('content')
-<div class="mb-4">
-    <h1 class="display-5">Dashboard Mahasiswa</h1>
-    <p class="text-muted">Selamat datang, {{ $mahasiswa->user->name }}</p>
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="display-5">Dashboard Mahasiswa</h1>
+        <p class="text-muted">Selamat datang, {{ $mahasiswa->user->name }}</p>
+    </div>
+    <a href="{{ route('mahasiswa.izin.create') }}" class="btn btn-primary btn-lg">
+        📝 Ajukan Izin
+    </a>
 </div>
 
 <div class="card shadow">
