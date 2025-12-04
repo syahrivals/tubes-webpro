@@ -40,13 +40,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-4. Konfigurasi database di `.env` (default menggunakan SQLite):
-```env
-DB_CONNECTION=sqlite
-DB_DATABASE=database/database.sqlite
-```
-
-Atau untuk MySQL:
+4. Konfigurasi database di `.env`:
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -113,9 +107,9 @@ php artisan test
 ## Teknologi
 
 - Laravel 12
-- Tailwind CSS 4
+- Bootstrap
 - Chart.js (untuk grafik)
-- SQLite/MySQL/PostgreSQL
+- MySQL
 
 ## License
 
