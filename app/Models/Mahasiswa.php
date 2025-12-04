@@ -20,19 +20,16 @@ class Mahasiswa extends Model
         'photo',
     ];
 
-    // Relasi ke user (satu mahasiswa punya satu user)
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relasi ke mata kuliah (satu mahasiswa bisa mengambil banyak mata kuliah)
     public function matkuls()
     {
         return $this->belongsToMany(Matkul::class, 'enrollments');
     }
 
-    // Relasi ke presensi (satu mahasiswa punya banyak presensi)
     public function presences()
     {
         return $this->hasMany(Presence::class);

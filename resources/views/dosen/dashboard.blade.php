@@ -3,9 +3,14 @@
 @section('title', 'Dashboard Dosen')
 
 @section('content')
-<div class="mb-4">
-    <h1 class="display-5">Dashboard Dosen</h1>
-    <p class="text-muted">Selamat datang, {{ auth()->user()->name }}</p>
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="display-5">Dashboard Dosen</h1>
+        <p class="text-muted">Selamat datang, {{ auth()->user()->name }}</p>
+    </div>
+    <a href="{{ route('dosen.qr-code') }}" class="btn btn-success btn-lg">
+        📱 Absen dengan QR Code
+    </a>
 </div>
 
 <div class="card shadow mb-4">

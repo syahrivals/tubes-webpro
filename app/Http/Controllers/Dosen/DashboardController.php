@@ -11,20 +11,16 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Ambil semua mata kuliah yang diajar dosen ini
         $user = auth()->user();
         $matkuls = Matkul::where('dosen_id', $user->id)->get();
         
-        // Hitung total mahasiswa unik dari semua mata kuliah
         $totalMahasiswa = 0;
         $mahasiswaIds = [];
         
         foreach ($matkuls as $matkul) {
-            // Ambil semua enrollment untuk mata kuliah ini
             $enrollments = Enrollment::where('matkul_id', $matkul->id)->get();
             
             foreach ($enrollments as $enrollment) {
-                // Simpan ID mahasiswa jika belum ada
                 if (!in_array($enrollment->mahasiswa_id, $mahasiswaIds)) {
                     $mahasiswaIds[] = $enrollment->mahasiswa_id;
                     $totalMahasiswa++;
@@ -32,22 +28,18 @@ class DashboardController extends Controller
             }
         }
         
-        // Hitung persentase kehadiran untuk setiap mata kuliah
         $attendanceStats = [];
         $chartLabels = [];
         $chartData = [];
         $mahasiswaCounts = [];
         
         foreach ($matkuls as $matkul) {
-            // Hitung jumlah mahasiswa di mata kuliah ini
             $enrollments = Enrollment::where('matkul_id', $matkul->id)->get();
             $mahasiswaCounts[$matkul->id] = count($enrollments);
             
-            // Ambil semua presensi untuk mata kuliah ini
             $allPresences = Presence::where('matkul_id', $matkul->id)->get();
             $totalPresences = count($allPresences);
             
-            // Hitung yang hadir
             $hadir = 0;
             foreach ($allPresences as $presence) {
                 if ($presence->status == 'hadir') {
@@ -55,7 +47,6 @@ class DashboardController extends Controller
                 }
             }
             
-            // Hitung persentase
             if ($totalPresences > 0) {
                 $percentage = round(($hadir / $totalPresences) * 100, 2);
             } else {
@@ -68,6 +59,15 @@ class DashboardController extends Controller
         }
 
         return view('dosen.dashboard', compact('matkuls', 'totalMahasiswa', 'attendanceStats', 'chartLabels', 'chartData', 'mahasiswaCounts'));
+    }
+
+    public function qrCode()
+    {
+        $token = bin2hex(random_bytes(16));
+        $expiresAt = now()->addMinutes(15);
+        $expiresAtTimestamp = $expiresAt->timestamp * 1000;
+        
+        return view('dosen.qr-code', compact('token', 'expiresAt', 'expiresAtTimestamp'));
     }
 }
 

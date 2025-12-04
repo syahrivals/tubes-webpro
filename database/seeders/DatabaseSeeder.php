@@ -14,7 +14,6 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Dosen
         $dosen = User::create([
             'name' => 'Dr. Dosen',
             'email' => 'dosen@example.com',
@@ -22,7 +21,6 @@ class DatabaseSeeder extends Seeder
             'role' => 'dosen',
         ]);
 
-        // Mahasiswa pertama
         $mahasiswa1 = User::create([
             'name' => 'Mahasiswa Satu',
             'email' => 'mahasiswa@example.com',
@@ -38,7 +36,6 @@ class DatabaseSeeder extends Seeder
             'phone' => '081234567890',
         ]);
 
-        // 9 mahasiswa lainnya
         for ($i = 2; $i <= 10; $i++) {
             $user = User::create([
                 'name' => "Mahasiswa $i",
@@ -56,7 +53,6 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // 2 Mata Kuliah
         $matkul1 = Matkul::create([
             'kode' => 'MK001',
             'nama' => 'Pemrograman Web',
@@ -73,7 +69,6 @@ class DatabaseSeeder extends Seeder
             'credits' => 3,
         ]);
 
-        // Enroll semua mahasiswa ke semua matkul
         $mahasiswas = Mahasiswa::all();
         foreach ($mahasiswas as $mhs) {
             Enrollment::create([
@@ -86,12 +81,11 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Sample presensi untuk 2 minggu terakhir
         $tanggalStart = now()->subDays(14);
         foreach ($mahasiswas as $mhs) {
             foreach ([$matkul1, $matkul2] as $matkul) {
                 for ($day = 0; $day < 14; $day++) {
-                    if (fake()->boolean(70)) { // 70% chance ada presensi
+                    if (fake()->boolean(70)) {
                         Presence::create([
                             'matkul_id' => $matkul->id,
                             'mahasiswa_id' => $mhs->id,

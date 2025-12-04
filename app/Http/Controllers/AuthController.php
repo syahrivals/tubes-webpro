@@ -14,13 +14,11 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        // Validasi input
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        // Coba login
         $email = $request->email;
         $password = $request->password;
         $remember = $request->has('remember');
@@ -28,7 +26,6 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $email, 'password' => $password], $remember)) {
             $request->session()->regenerate();
             
-            // Cek role user dan redirect
             $user = auth()->user();
             if ($user->role == 'dosen') {
                 return redirect()->route('dosen.dashboard');
@@ -37,7 +34,6 @@ class AuthController extends Controller
             }
         }
 
-        // Jika login gagal, kembali dengan error
         return back()->withErrors([
             'email' => 'Email atau password salah',
         ]);
@@ -45,14 +41,11 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        // Logout user
         Auth::logout();
         
-        // Hapus session
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         
-        // Redirect ke halaman login
         return redirect()->route('login');
     }
 }

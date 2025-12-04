@@ -15,13 +15,11 @@ class Enrollment extends Model
         'matkul_id',
     ];
 
-    // Relasi ke mahasiswa (satu enrollment untuk satu mahasiswa)
     public function mahasiswa()
     {
         return $this->belongsTo(Mahasiswa::class);
     }
 
-    // Relasi ke mata kuliah (satu enrollment untuk satu mata kuliah)
     public function matkul()
     {
         return $this->belongsTo(Matkul::class);

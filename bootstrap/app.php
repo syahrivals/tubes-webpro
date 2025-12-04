@@ -15,11 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
         
-        // Disable CSRF untuk development (sederhana)
         $middleware->validateCsrfTokens(except: [
             '*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
     })->create();
