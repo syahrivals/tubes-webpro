@@ -8,9 +8,14 @@
         <h1 class="display-5">Dashboard Dosen</h1>
         <p class="text-muted">Selamat datang, {{ auth()->user()->name }}</p>
     </div>
-    <a href="{{ route('dosen.qr-code') }}" class="btn btn-success btn-lg">
-        📱 Absen dengan QR Code
-    </a>
+    <div class="d-flex gap-2">
+        <a href="{{ route('dosen.izin.index') }}" class="btn btn-warning btn-lg">
+            📝 Validasi Izin
+        </a>
+        <a href="{{ route('dosen.qr-code') }}" class="btn btn-success btn-lg">
+            📱 Absen dengan QR Code
+        </a>
+    </div>
 </div>
 
 <div class="card shadow mb-4">
