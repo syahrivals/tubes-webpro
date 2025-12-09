@@ -14,9 +14,9 @@
             <div class="d-flex gap-3">
                 <a href="{{ route('dashboard') }}" class="text-white text-decoration-none">Dashboard</a>
                 @if(auth()->user()->isDosen())
-                    <a href="{{ route('presences.index') }}" class="text-white text-decoration-none">Presensi</a>
+                    <a href="{{ route('presences.index') }}" class="text-white text-decoration-none mt-1">Presensi</a>
                 @else
-                    <a href="{{ route('mahasiswa.profile') }}" class="text-white text-decoration-none">Profil</a>
+                    <a href="{{ route('mahasiswa.profile') }}" class="text-white text-decoration-none mt-1">Profil</a>
                 @endif
                 <form method="POST" action="{{ route('logout') }}" class="d-inline">
                     @csrf
