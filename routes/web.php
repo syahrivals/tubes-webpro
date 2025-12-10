@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Dosen\DashboardController as DosenDashboardController;
 use App\Http\Controllers\Dosen\IzinController as DosenIzinController;
+use App\Http\Controllers\Dosen\MatkulController as DosenMatkulController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 use App\Http\Controllers\Mahasiswa\IzinController as MahasiswaIzinController;
 use App\Http\Controllers\PresenceController;
@@ -22,29 +23,54 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/dashboard', function () {
         $user = auth()->user();
-        if ($user->role == 'dosen') {
-            return redirect()->route('dosen.dashboard');
-        } else {
-            return redirect()->route('mahasiswa.dashboard');
-        }
+        return $user->role === 'dosen'
+            ? redirect()->route('dosen.dashboard')
+            : redirect()->route('mahasiswa.dashboard');
     })->name('dashboard');
 
-    Route::middleware('role:dosen')->prefix('dosen')->name('dosen.')->group(function () {
+    // =======================
+    // ROUTE DOSEN
+    // =======================
+    Route::middleware('role:dosen')
+        ->prefix('dosen')
+        ->name('dosen.')
+        ->group(function () {
+
+        // Dashboard
         Route::get('/dashboard', [DosenDashboardController::class, 'index'])->name('dashboard');
         Route::get('/qr-code', [DosenDashboardController::class, 'qrCode'])->name('qr-code');
+
+        // Izin mahasiswa
         Route::get('/izin', [DosenIzinController::class, 'index'])->name('izin.index');
         Route::post('/izin/{id}/approve', [DosenIzinController::class, 'approve'])->name('izin.approve');
         Route::post('/izin/{id}/reject', [DosenIzinController::class, 'reject'])->name('izin.reject');
+
+        // =======================
+        //  ROUTE MATA KULIAH
+        // =======================
+        Route::delete('/matkul/{id}', [DosenMatkulController::class, 'destroy'])
+            ->name('matkul.destroy');
     });
 
-    Route::middleware('role:mahasiswa')->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
+    // =======================
+    // ROUTE MAHASISWA
+    // =======================
+    Route::middleware('role:mahasiswa')
+        ->prefix('mahasiswa')
+        ->name('mahasiswa.')
+        ->group(function () {
+
         Route::get('/dashboard', [MahasiswaDashboardController::class, 'index'])->name('dashboard');
         Route::get('/profile', [MahasiswaDashboardController::class, 'profile'])->name('profile');
         Route::put('/profile', [MahasiswaDashboardController::class, 'updateProfile'])->name('profile.update');
+
         Route::get('/izin', [MahasiswaIzinController::class, 'create'])->name('izin.create');
         Route::post('/izin', [MahasiswaIzinController::class, 'store'])->name('izin.store');
     });
 
+    // =======================
+    // PRESENSI DOSEN
+    // =======================
     Route::middleware('role:dosen')->group(function () {
         Route::get('/presences', [PresenceController::class, 'index'])->name('presences.index');
         Route::post('/presences', [PresenceController::class, 'store'])->name('presences.store');

@@ -190,10 +190,35 @@
                     <td>{{ $matkul->nama }}</td>
                     <td>{{ $mahasiswaCounts[$matkul->id] ?? 0 }}</td>
                     <td class="fw-semibold">{{ $attendanceStats[$matkul->id] ?? 0 }}%</td>
-                    <td>
+
+                    <td class="d-flex gap-2">
+
+                        <!-- Tombol Presensi -->
                         <a href="{{ route('presences.index', ['matkul_id' => $matkul->id]) }}" 
-                            class="btn btn-outline-primary btn-sm"
-                        >Presensi</a>
+                            class="btn btn-outline-primary btn-sm">
+                            Presensi
+                        </a>
+
+                        <!-- Tombol Hapus Mata Kuliah -->
+                        <form action="{{ route('dosen.matkul.destroy', $matkul->id) }}" method="POST"
+                                onsubmit="return confirm('Yakin ingin menghapus mata kuliah ini?');">
+                            @csrf
+                            @method('DELETE')
+
+                            <button type="submit" class="btn btn-sm"
+                                style="
+                                    background: linear-gradient(140deg, #FF7979, #D72638);
+                                    border: none;
+                                    color: white;
+                                    padding: 6px 14px;
+                                    border-radius: 8px;
+                                    font-weight: 600;
+                                ">
+                                Hapus
+                            </button>
+                        </form>
+
+
                     </td>
                 </tr>
 
@@ -208,6 +233,7 @@
         </table>
     </div>
 </div>
+
 
 
 <!-- ===== CHART ===== -->
@@ -236,5 +262,4 @@
     });
 </script>
 @endif
-
 @endsection
