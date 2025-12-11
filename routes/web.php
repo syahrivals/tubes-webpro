@@ -46,10 +46,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/izin/{id}/reject', [DosenIzinController::class, 'reject'])->name('izin.reject');
 
         // =======================
-        //  ROUTE MATA KULIAH
-        // =======================
-        Route::delete('/matkul/{id}', [DosenMatkulController::class, 'destroy'])
-            ->name('matkul.destroy');
+    //  ROUTE MATA KULIAH
+    // =======================
+    Route::resource('matkuls', DosenMatkulController::class);
+    Route::get('/matkul/create', [DosenMatkulController::class, 'create'])->name('dosen.matkul.create');
+    // Tetap tambahkan route manual jika ada custom logic di create/edit/destroy
     });
 
     // =======================
@@ -66,6 +67,10 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/izin', [MahasiswaIzinController::class, 'create'])->name('izin.create');
         Route::post('/izin', [MahasiswaIzinController::class, 'store'])->name('izin.store');
+        
+        // Scan QR untuk absen
+        Route::get('/scan', [\App\Http\Controllers\Mahasiswa\ScanController::class, 'index'])->name('scan.index');
+        Route::post('/scan', [\App\Http\Controllers\Mahasiswa\ScanController::class, 'store'])->name('scan.store');
     });
 
     // =======================

@@ -5,18 +5,41 @@
 @section('content')
 <div class="mb-4 d-flex justify-content-between align-items-center">
     <div>
-        <h1 class="display-5">Dashboard Mahasiswa</h1>
-        <p class="text-muted">Selamat datang, {{ $mahasiswa->user->name }}</p>
+        <h1 class="display-5" style="font-weight:800;color:var(--primary);">Dashboard Mahasiswa</h1>
+        <p style="color:var(--text-soft);">Selamat datang, {{ $mahasiswa->user->name }}</p>
     </div>
-    <a href="{{ route('mahasiswa.izin.create') }}" class="btn btn-primary btn-lg">
-        📝 Ajukan Izin
-    </a>
+    <div class="d-flex gap-2">
+        <a href="{{ route('mahasiswa.izin.create') }}" class="btn btn-primary btn-lg">
+            📝 Ajukan Izin
+        </a>
+        <a href="{{ route('mahasiswa.scan.index') }}" class="btn btn-success btn-lg">
+            📷 Scan QR
+        </a>
+    </div>
 </div>
 
-<div class="card shadow">
+@if(isset($todaysMatkuls) && $todaysMatkuls->count() > 0)
+<div class="card mb-4">
     <div class="card-body">
-        <h2 class="card-title mb-4">Ringkasan Kehadiran</h2>
-        
+        <h2 class="mb-3" style="font-weight:700;color:var(--primary);">Mata Kuliah Hari Ini</h2>
+        <div class="row">
+            @foreach($todaysMatkuls as $m)
+            <div class="col-md-6 mb-3">
+                <div class="p-3 border rounded shadow-sm">
+                    <div class="fw-semibold" style="font-size:1.1rem;">{{ $m->kode }} - {{ $m->nama }}</div>
+                    <div style="color:var(--text-soft);">{{ ucfirst($m->hari) }} @if($m->jam) | Jam: {{ $m->jam }} @endif</div>
+                    <div style="color:var(--text-soft);">Semester: {{ $m->semester }}, SKS: {{ $m->credits }}</div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+@endif
+
+<div class="card">
+    <div class="card-body">
+        <h2 class="mb-4" style="font-weight:700;color:var(--primary);">Ringkasan Kehadiran</h2>
         @if($matkuls->count() > 0)
         <div class="mb-4">
             <label for="matkulSelect" class="form-label">Pilih Mata Kuliah:</label>
@@ -30,53 +53,43 @@
                 </select>
             </form>
         </div>
-        
         @if($selectedData)
         <div>
             <h3 class="h5 mb-3">{{ $selectedData['matkul']->kode }} - {{ $selectedData['matkul']->nama }}</h3>
-            <div class="row g-3 mb-4">
-                <div class="col-6 col-md-2">
-                    <div class="card bg-success text-white">
-                        <div class="card-body p-3">
-                            <p class="card-text small mb-0">Hadir</p>
-                            <h4 class="mb-0">{{ $selectedData['hadir'] }}</h4>
+            <div class="mb-4">
+                <div class="d-flex flex-wrap gap-3 justify-content-between">
+                    <div class="card text-white flex-grow-1" style="min-width:120px;max-width:180px;background:var(--success);">
+                        <div class="card-body text-center py-3">
+                            <div style="font-size:1.1rem;font-weight:600;">Hadir</div>
+                            <div style="font-size:2rem;font-weight:700;">{{ $selectedData['hadir'] }}</div>
                         </div>
                     </div>
-                </div>
-                <div class="col-6 col-md-2">
-                    <div class="card bg-warning text-white">
-                        <div class="card-body p-3">
-                            <p class="card-text small mb-0">Izin</p>
-                            <h4 class="mb-0">{{ $selectedData['izin'] }}</h4>
+                    <div class="card text-white flex-grow-1" style="min-width:120px;max-width:180px;background:var(--secondary);color:var(--primary);">
+                        <div class="card-body text-center py-3">
+                            <div style="font-size:1.1rem;font-weight:600;">Izin</div>
+                            <div style="font-size:2rem;font-weight:700;">{{ $selectedData['izin'] }}</div>
                         </div>
                     </div>
-                </div>
-                <div class="col-6 col-md-2">
-                    <div class="card bg-info text-white">
-                        <div class="card-body p-3">
-                            <p class="card-text small mb-0">Sakit</p>
-                            <h4 class="mb-0">{{ $selectedData['sakit'] }}</h4>
+                    <div class="card text-white flex-grow-1" style="min-width:120px;max-width:180px;background:var(--info);">
+                        <div class="card-body text-center py-3">
+                            <div style="font-size:1.1rem;font-weight:600;">Sakit</div>
+                            <div style="font-size:2rem;font-weight:700;">{{ $selectedData['sakit'] }}</div>
                         </div>
                     </div>
-                </div>
-                <div class="col-6 col-md-2">
-                    <div class="card bg-danger text-white">
-                        <div class="card-body p-3">
-                            <p class="card-text small mb-0">Alpha</p>
-                            <h4 class="mb-0">{{ $selectedData['alpha'] }}</h4>
+                    <div class="card text-white flex-grow-1" style="min-width:120px;max-width:180px;background:var(--danger);">
+                        <div class="card-body text-center py-3">
+                            <div style="font-size:1.1rem;font-weight:600;">Alpha</div>
+                            <div style="font-size:2rem;font-weight:700;">{{ $selectedData['alpha'] }}</div>
                         </div>
                     </div>
-                </div>
-                <div class="col-6 col-md-2">
-                    <div class="card bg-primary text-white">
-                        <div class="card-body p-3">
-                            <p class="card-text small mb-0">Persentase</p>
-                            <h4 class="mb-0">{{ $selectedData['percentage'] }}%</h4>
+                    <div class="card text-white flex-grow-1" style="min-width:120px;max-width:180px;background:var(--primary);">
+                        <div class="card-body text-center py-3">
+                            <div style="font-size:1.1rem;font-weight:600;">Persentase</div>
+                            <div style="font-size:2rem;font-weight:700;">{{ $selectedData['percentage'] }}%</div>
                         </div>
                     </div>
                 </div>
             </div>
-            
             <div class="table-responsive">
                 <table class="table table-striped table-sm">
                     <thead>

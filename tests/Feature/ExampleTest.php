@@ -10,6 +10,7 @@ class ExampleTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        // homepage redirects to login in this app, expect 302 redirect
+        $response->assertStatus(302);
     }
 }

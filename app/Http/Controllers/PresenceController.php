@@ -70,6 +70,11 @@ class PresenceController extends Controller
                 ->first();
             
             if ($existingPresence) {
+                // if locked (e.g. validated by dosen), do not overwrite
+                if ($existingPresence->locked) {
+                    continue;
+                }
+
                 $existingPresence->status = $presenceData['status'];
                 if (isset($presenceData['note'])) {
                     $existingPresence->note = $presenceData['note'];
@@ -86,6 +91,7 @@ class PresenceController extends Controller
                     $newPresence->note = $presenceData['note'];
                 }
                 $newPresence->recorded_by = auth()->id();
+                $newPresence->locked = false;
                 $newPresence->save();
             }
         }

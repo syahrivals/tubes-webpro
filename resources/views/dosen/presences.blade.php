@@ -24,7 +24,7 @@
                 <label class="form-label fw-bold">Tanggal</label>
                 <input type="date" name="tanggal" value="{{ $tanggal }}" class="form-control" required>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <button type="submit" class="btn btn-primary w-100">Tampilkan</button>
             </div>
         </form>

@@ -13,6 +13,13 @@
                 <div class="mb-4">
                     <div id="qrcode" class="d-inline-block p-4 bg-white border rounded"></div>
                 </div>
+
+                @if(isset($matkuls) && isset($matkulId))
+                    <div class="mb-3 text-start">
+                        <p class="text-muted mb-2">Mata Kuliah:</p>
+                        <div class="fw-semibold">{{ optional($matkuls->firstWhere('id', $matkulId))->kode }} - {{ optional($matkuls->firstWhere('id', $matkulId))->nama }}</div>
+                    </div>
+                @endif
                 
                 <div class="mb-3">
                     <p class="text-muted mb-2">Token:</p>

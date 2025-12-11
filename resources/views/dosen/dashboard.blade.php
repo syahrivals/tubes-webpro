@@ -2,158 +2,115 @@
 
 @section('title', 'Dashboard Dosen')
 
+
 @section('content')
 
-<style>
-    /* ==== COLOR BLUE PALETTE ==== */
-    :root {
-        --primary: #0A74FF; 
-        --primary-light: #4A97FF;
-        --primary-dark: #0059D4;
+<!-- ===== TABEL NOTIFIKASI IZIN MAHASISWA ===== -->
+@if(isset($notifications) && $notifications->count() > 0)
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="mb-3" style="font-weight:700;">Notifikasi Izin Mahasiswa</h5>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mahasiswa</th>
+                        <th>Mata Kuliah</th>
+                        <th>Tanggal Izin</th>
+                        <th>Waktu Masuk</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($notifications as $notif)
+                        <tr>
+                            <td>{{ $notif->data['message'] ? explode(' ', $notif->data['message'])[1] : '-' }}</td>
+                            <td>
+                                @php
+                                    $msg = $notif->data['message'] ?? '';
+                                    preg_match('/untuk (.*?) pada/', $msg, $matkulMatch);
+                                @endphp
+                                {{ $matkulMatch[1] ?? '-' }}
+                            </td>
+                            <td>
+                                @php
+                                    preg_match('/pada (\d{4}-\d{2}-\d{2})/', $msg, $tglMatch);
+                                @endphp
+                                {{ $tglMatch[1] ?? '-' }}
+                            </td>
+                            <td>{{ $notif->created_at->diffForHumans() }}</td>
+                            <td>
+                                <span class="badge bg-warning text-dark">Menunggu</span>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-2 text-end">
+            <a href="{{ route('dosen.izin.index') }}" class="btn btn-sm btn-primary">Lihat Semua & Validasi Izin</a>
+        </div>
+    </div>
+</div>
+@endif
 
-        --success: #33D697;
-        --success-light: #66F3B7;
-        --success-dark: #1EA56D;
-
-        --yellow: #F6C979;
-        --yellow-dark: #E8A844;
-
-        --bg-soft: #F3F7FF;
-        --text-dark: #1F2430;
-        --text-soft: #6B7082;
-    }
-
-    body {
-        background: var(--bg-soft) !important;
-    }
-
-    /* ===== GLOBAL A NO UNDERLINE ===== */
-    a {
-        text-decoration: none !important;
-    }
-
-    /* ===== MODERN CARD ===== */
-    .modern-card {
-        border: none;
-        border-radius: 22px;
-        background: #ffffff;
-        padding: 28px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-        transition: 0.3s ease;
-    }
-    .modern-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 16px 36px rgba(0,0,0,0.1);
-    }
-
-    /* ===== STATISTIC CARDS ===== */
-    .stat-card {
-        padding: 26px;
-        border-radius: 20px;
-        color: white;
-        background-size: 180%;
-        background-position: center;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-        transition: 0.3s;
-    }
-
-    .stat-blue {
-        background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
-    }
-
-    .stat-green {
-        background: linear-gradient(135deg, var(--success-light), var(--success-dark));
-    }
-
-    .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 26px rgba(0,0,0,0.16);
-    }
-
-    /* ===== BUTTONS SUPER MODERN ===== */
-    .modern-btn {
-        border-radius: 14px;
-        padding: 12px 26px;
-        font-weight: 600;
-        font-size: 15px;
-        color: white !important;
-        transition: 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        text-decoration: none !important;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    }
-
-    .modern-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 9px 26px rgba(0,0,0,0.22);
-    }
-
-    .btn-warning-modern {
-        background: linear-gradient(140deg, #FFDD9B, #F6B457);
-        border: none;
-    }
-
-    .btn-success-modern {
-        background: linear-gradient(140deg, #78F2BB, #3CCF8C);
-        border: none;
-    }
-
-    /* ===== TABLE ===== */
-    .table thead {
-        background: #E4EEFF;
-        font-weight: 600;
-        color: var(--text-dark);
-    }
-    .table-hover tbody tr:hover {
-        background: #f0f6ff;
-    }
-
-    .modern-title {
-        font-weight: 800;
-        color: var(--text-dark);
-    }
-
-    .text-soft {
-        color: var(--text-soft);
-    }
-</style>
-
-
-<!-- ===== HEADER ===== -->
 <div class="mb-4 d-flex justify-content-between align-items-center">
     <div>
-        <h1 class="display-5 modern-title">Dashboard Dosen</h1>
-        <p class="text-soft">Selamat datang, {{ auth()->user()->name }}</p>
+        <h1 class="display-5" style="font-weight:800;color:var(--primary);">Dashboard Dosen</h1>
+        <p style="color:var(--text-soft);">Selamat datang, {{ auth()->user()->name }}</p>
     </div>
 
     <div class="d-flex gap-2">
-        <a href="{{ route('dosen.izin.index') }}" class="modern-btn btn-warning-modern">
-            📝 Validasi Izin
+    <a href="{{ route('dosen.matkuls.create') }}" class="btn btn-primary">
+            Tambah Mata Kuliah
         </a>
-
-        <a href="{{ route('dosen.qr-code') }}" class="modern-btn btn-success-modern">
-            📱 Absen dengan QR Code
+        <a href="{{ route('dosen.izin.index') }}" class="btn btn-secondary">
+            Validasi Izin
+        </a>
+        <a href="{{ route('dosen.qr-code') }}" class="btn btn-success">
+            Absen dengan QR Code
         </a>
     </div>
 </div>
 
+@if(isset($todaysMatkuls) && $todaysMatkuls->count() > 0)
+<div class="card mb-4">
+    <h2 class="mb-3" style="font-weight:700;color:var(--primary);">Mata Kuliah Hari Ini</h2>
+    <div class="row">
+        @foreach($todaysMatkuls as $m)
+        <div class="col-md-6 mb-3">
+            <div class="p-3 border rounded shadow-sm">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-semibold" style="font-size:1.1rem;">{{ $m->kode }} - {{ $m->nama }}</div>
+                        <div style="color:var(--text-soft);">{{ ucfirst($m->hari) }} @if($m->jam) | Jam: {{ $m->jam }} @endif</div>
+                        <div style="color:var(--text-soft);">{{ $mahasiswaCounts[$m->id] ?? 0 }} mahasiswa</div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('presences.index', ['matkul_id' => $m->id]) }}" class="btn btn-outline-primary btn-sm">Presensi</a>
+                        <a href="{{ route('dosen.qr-code', ['matkul_id' => $m->id]) }}" class="btn btn-success btn-sm">Buat QR</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+</div>
+@endif
 
-<!-- ===== STATISTIK ===== -->
-<div class="modern-card mb-4">
-    <h2 class="modern-title mb-4">Statistik</h2>
+<div class="card mb-4">
+    <h2 class="mb-4" style="font-weight:700;color:var(--primary);">Statistik</h2>
 
     <div class="row mb-4">
         <div class="col-md-4 mb-3">
-            <div class="stat-card stat-blue">
+            <div class="card shadow-sm text-white" style="background:var(--primary);border-radius:20px;">
                 <p class="mb-1">Total Mata Kuliah</p>
                 <h2 class="fw-bold">{{ $matkuls->count() }}</h2>
             </div>
         </div>
 
         <div class="col-md-4 mb-3">
-            <div class="stat-card stat-green">
+            <div class="card shadow-sm text-white" style="background:var(--success);border-radius:20px;">
                 <p class="mb-1">Total Mahasiswa</p>
                 <h2 class="fw-bold">{{ $totalMahasiswa }}</h2>
             </div>
@@ -161,15 +118,13 @@
     </div>
 
     @if(count($chartLabels) > 0)
-        <h3 class="modern-title mt-3 mb-3">Grafik Persentase Kehadiran per Mata Kuliah</h3>
+    <h3 class="mt-3 mb-3" style="font-weight:700;color:var(--primary);">Grafik Persentase Kehadiran per Mata Kuliah</h3>
         <canvas id="attendanceChart" style="max-height: 360px;"></canvas>
     @endif
 </div>
 
-
-<!-- ===== TABLE ===== -->
-<div class="modern-card">
-    <h2 class="modern-title mb-4">Mata Kuliah</h2>
+<div class="card">
+    <h2 class="mb-4" style="font-weight:700;color:var(--primary);">Mata Kuliah</h2>
 
     <div class="table-responsive">
         <table class="table table-hover align-middle">
@@ -193,18 +148,19 @@
 
                     <td class="d-flex gap-2">
 
-                        <!-- Tombol Presensi -->
                         <a href="{{ route('presences.index', ['matkul_id' => $matkul->id]) }}" 
                             class="btn btn-outline-primary btn-sm">
                             Presensi
                         </a>
 
-                        <!-- Tombol Hapus Mata Kuliah -->
-                        <form action="{{ route('dosen.matkul.destroy', $matkul->id) }}" method="POST"
-                                onsubmit="return confirm('Yakin ingin menghapus mata kuliah ini?');">
+                        <a href="{{ route('dosen.matkuls.edit', $matkul->id) }}" class="btn btn-warning btn-sm" style="color:white;font-weight:600;">
+                            Edit
+                        </a>
+
+                        <form action="{{ route('dosen.matkuls.destroy', $matkul->id) }}" method="POST"
+                                onsubmit="return confirm('Yakin ingin menghapus mata kuliah ini?');" style="display:inline-block;">
                             @csrf
                             @method('DELETE')
-
                             <button type="submit" class="btn btn-sm"
                                 style="
                                     background: linear-gradient(140deg, #FF7979, #D72638);
@@ -234,9 +190,6 @@
     </div>
 </div>
 
-
-
-<!-- ===== CHART ===== -->
 @if(count($chartLabels) > 0)
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>

@@ -11,8 +11,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        $matkuls = Matkul::where('dosen_id', $user->id)->get();
+    $user = auth()->user();
+    $matkuls = Matkul::where('dosen_id', $user->id)->get();
+    // Ambil notifikasi izin terbaru
+    $notifications = $user->notifications()->where('type', 'App\\Notifications\\IzinSubmitted')->latest()->take(10)->get();
         
         $totalMahasiswa = 0;
         $mahasiswaIds = [];
@@ -58,16 +60,40 @@ class DashboardController extends Controller
             $chartData[] = $percentage;
         }
 
-        return view('dosen.dashboard', compact('matkuls', 'totalMahasiswa', 'attendanceStats', 'chartLabels', 'chartData', 'mahasiswaCounts'));
+        // determine today's mata kuliah based on 'hari' column (if set)
+        $todayName = strtolower(now()->locale('id')->isoFormat('dddd'));
+        $todaysMatkuls = $matkuls->filter(function ($m) use ($todayName) {
+            return $m->hari && strtolower($m->hari) === $todayName;
+        });
+
+    return view('dosen.dashboard', compact('matkuls', 'totalMahasiswa', 'attendanceStats', 'chartLabels', 'chartData', 'mahasiswaCounts', 'todaysMatkuls', 'notifications'));
     }
 
     public function qrCode()
     {
+        $user = auth()->user();
+        $matkuls = Matkul::where('dosen_id', $user->id)->get();
+
+        $matkulId = request()->get('matkul_id') ?? ($matkuls->first()->id ?? null);
+
+        if (!$matkulId) {
+            return redirect()->route('dosen.dashboard')->with('error', 'Tidak ada mata kuliah untuk membuat QR');
+        }
+
         $token = bin2hex(random_bytes(16));
         $expiresAt = now()->addMinutes(15);
+
+        // create db session
+        \App\Models\QrSession::create([
+            'matkul_id' => $matkulId,
+            'token' => $token,
+            'expires_at' => $expiresAt,
+            'created_by' => $user->id,
+        ]);
+
         $expiresAtTimestamp = $expiresAt->timestamp * 1000;
-        
-        return view('dosen.qr-code', compact('token', 'expiresAt', 'expiresAtTimestamp'));
+
+        return view('dosen.qr-code', compact('token', 'expiresAt', 'expiresAtTimestamp', 'matkulId', 'matkuls'));
     }
 }
 

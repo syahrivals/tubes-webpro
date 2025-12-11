@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Aplikasi Presensi')</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/university.css'])
 
     <style>
-        /* Premium Blue Gradient */
         .nav-premium {
             background: linear-gradient(135deg, #3A7BD5 0%, #00D2FF 100%);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
@@ -61,32 +60,32 @@
 </head>
 
 <body>
-    @auth
-    <nav class="navbar nav-premium navbar-dark shadow-sm">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ route('dashboard') }}">Aplikasi Presensi</a>
-
-            <div class="d-flex gap-4">
-                <a href="{{ route('dashboard') }}" class="nav-link-custom mt-1">Dashboard</a>
-
-                @if(auth()->user()->isDosen())
-                    <a href="{{ route('presences.index') }}" class="nav-link-custom mt-1">Presensi</a>
-                @else
-                    <a href="{{ route('mahasiswa.profile') }}" class="nav-link-custom mt-1">Profil</a>
-                @endif
-
-                <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                    @csrf
-                    <button type="submit" class="btn btn-link btn-logout text-decoration-none p-0 border-0">
-                        Logout
-                    </button>
-                </form>
+    <header class="header">
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+            <div class="logo">
+                <!-- <img src="/favicon.ico" alt="Logo" style="height:32px;vertical-align:middle;margin-right:10px;"> -->
+                Kitpeyut University
             </div>
+            @auth
+            <nav class="nav">
+                <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
+                @if(auth()->user()->isDosen())
+                    <a href="{{ route('presences.index') }}" class="{{ request()->routeIs('presences.*') ? 'active' : '' }}">Presensi</a>
+                    <a href="{{ route('dosen.matkuls.index') }}" class="{{ request()->routeIs('dosen.matkuls.*') ? 'active' : '' }}">Mata Kuliah</a>
+                @else
+                    <a href="{{ route('mahasiswa.profile') }}" class="{{ request()->routeIs('mahasiswa.profile') ? 'active' : '' }}">Profil</a>
+                @endif
+                <form method="POST" action="{{ route('logout') }}" style="display:inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-secondary" style="margin-left:16px;">Logout</button>
+                </form>
+            </nav>
+            @endauth
         </div>
-    </nav>
-    @endauth
+    </header>
 
-    <main class="container my-4">
+
+    <main class="container" style="margin-top:40px;max-width:900px;">
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show shadow-sm">
                 {{ session('success') }}

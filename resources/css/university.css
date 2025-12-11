@@ -1,0 +1,177 @@
+/* Modern Universitas Style: Telkom-Red + Unpad-Gold Hybrid */
+:root {
+    --primary: #C3002F; /* Telkom Red */
+    --secondary: #D4A017; /* Unpad Gold */
+    --background: #F9FAFC;
+    --card-bg: #FFFFFF;
+
+    --text-dark: #1F1F1F;
+    --text-soft: #6E6E6E;
+
+    --success: #28C76F;
+    --danger: #EA5455;
+    --info: #3BAFDA;
+
+    --border-radius: 18px;
+
+    /* Softer but premium shadow */
+    --shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+
+    --font-main: 'Inter', 'Segoe UI', sans-serif;
+}
+
+body {
+    background: var(--background);
+    color: var(--text-dark);
+    font-family: var(--font-main);
+    letter-spacing: 0.2px;
+}
+
+/* HEADER */
+.header {
+    background: var(--primary);
+    padding: 20px 0;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow);
+}
+
+.header .logo {
+    font-size: 2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+/* Navbar */
+.header .nav {
+    display: flex;
+    gap: 28px;
+}
+
+.header .nav a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 500;
+    position: relative;
+    transition: 0.25s;
+}
+
+.header .nav a:hover {
+    color: var(--secondary);
+}
+
+/* CARD */
+.card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(0,0,0,0.03);
+}
+
+/* BUTTONS */
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px 22px;
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 3px 10px rgba(195, 0, 47, 0.2);
+    transition: 0.25s;
+}
+.btn-primary:hover {
+    background: #9A0025; /* slightly darker red */
+}
+
+.btn-secondary {
+    background: var(--secondary);
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px 22px;
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 3px 10px rgba(212, 160, 23, 0.2);
+    transition: 0.25s;
+}
+.btn-secondary:hover {
+    background: #AD820F;
+}
+
+/* TABLE */
+.table {
+    background: var(--card-bg);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.table th {
+    background: var(--primary);
+    color: #fff;
+    padding: 14px;
+    letter-spacing: 0.5px;
+}
+
+.table td {
+    padding: 14px;
+    color: var(--text-dark);
+}
+
+/* BADGES */
+.badge {
+    padding: 5px 14px;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+.badge-success { background: var(--success); color: #fff; }
+.badge-danger { background: var(--danger); color: #fff; }
+.badge-info { background: var(--info); color: #fff; }
+.badge-warning { background: var(--secondary); color: #fff; }
+
+/* SIDEBAR */
+.sidebar {
+    background: var(--primary);
+    color: #fff;
+    min-width: 230px;
+    height: 100vh;
+    padding: 32px 0;
+    box-shadow: var(--shadow);
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.sidebar .nav {
+    display: flex;
+    flex-direction: column;
+    margin-top: 32px;
+    gap: 16px;
+}
+
+.sidebar .nav a {
+    padding: 12px 28px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 10px;
+    transition: 0.25s;
+}
+
+.sidebar .nav a:hover,
+.sidebar .nav a.active {
+    background: var(--secondary);
+    color: #fff;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .sidebar { min-width: 70px; padding: 12px 0; }
+    .sidebar .nav a { padding: 10px; font-size: 0.9rem; }
+    .header { flex-direction: column; gap: 12px; }
+}

@@ -42,8 +42,19 @@ class IzinController extends Controller
         $izin->validated_by = $user->id;
         $izin->validated_at = now();
         $izin->save();
-        
-        return redirect()->back()->with('success', 'Izin berhasil disetujui');
+
+        // set presence for that mahasiswa on that date to 'izin' and lock it
+        $presence = \App\Models\Presence::firstOrNew([
+            'matkul_id' => $izin->matkul_id,
+            'mahasiswa_id' => $izin->mahasiswa_id,
+            'tanggal' => $izin->tanggal,
+        ]);
+        $presence->status = 'izin';
+        $presence->recorded_by = $user->id;
+        $presence->locked = true;
+        $presence->save();
+
+        return redirect()->back()->with('success', 'Izin berhasil disetujui dan presensi diperbarui');
     }
 
     public function reject($id)
@@ -59,7 +70,18 @@ class IzinController extends Controller
         $izin->validated_by = $user->id;
         $izin->validated_at = now();
         $izin->save();
-        
-        return redirect()->back()->with('success', 'Izin berhasil ditolak');
+
+        // set presence to alpha and lock
+        $presence = \App\Models\Presence::firstOrNew([
+            'matkul_id' => $izin->matkul_id,
+            'mahasiswa_id' => $izin->mahasiswa_id,
+            'tanggal' => $izin->tanggal,
+        ]);
+        $presence->status = 'alpha';
+        $presence->recorded_by = $user->id;
+        $presence->locked = true;
+        $presence->save();
+
+        return redirect()->back()->with('success', 'Izin berhasil ditolak dan presensi diperbarui');
     }
 }

@@ -4,10 +4,10 @@
 
 @section('content')
 <div class="mb-4">
-    <h1 class="display-5">Validasi Izin Mahasiswa</h1>
+    <h1 class="display-5" style="font-weight:800;color:var(--primary);">Validasi Izin Mahasiswa</h1>
 </div>
 
-<div class="card shadow mb-4">
+<div class="card mb-4">
     <div class="card-body">
         <form method="GET" action="{{ route('dosen.izin.index') }}" class="row g-3 align-items-end">
             <div class="col-md-10">
@@ -28,10 +28,10 @@
     </div>
 </div>
 
-<div class="card shadow">
+<div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-hover align-middle">
                 <thead>
                     <tr>
                         <th>Mahasiswa</th>
@@ -57,7 +57,7 @@
                         <td>{{ $izin->alasan ?? '-' }}</td>
                         <td>
                             @if($izin->bukti_file)
-                                <a href="{{ asset('storage/' . $izin->bukti_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <a href="{{ asset('storage/' . $izin->bukti_file) }}" target="_blank" class="btn btn-sm btn-outline-primary" style="border-radius:8px;">
                                     📄 Lihat Bukti
                                 </a>
                             @else
@@ -66,11 +66,11 @@
                         </td>
                         <td>
                             @if($izin->status == 'pending')
-                                <span class="badge bg-warning">Pending</span>
+                                <span class="badge badge-warning">Pending</span>
                             @elseif($izin->status == 'approved')
-                                <span class="badge bg-success">Approved</span>
+                                <span class="badge badge-success">Approved</span>
                             @else
-                                <span class="badge bg-danger">Rejected</span>
+                                <span class="badge badge-danger">Rejected</span>
                             @endif
                         </td>
                         <td>
@@ -78,13 +78,13 @@
                                 <div class="d-flex gap-2">
                                     <form method="POST" action="{{ route('dosen.izin.approve', $izin->id) }}" class="d-inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Setujui izin ini?')">
+                                        <button type="submit" class="btn btn-sm btn-success" style="border-radius:8px;" onclick="return confirm('Setujui izin ini?')">
                                             ✓ Approve
                                         </button>
                                     </form>
                                     <form method="POST" action="{{ route('dosen.izin.reject', $izin->id) }}" class="d-inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tolak izin ini?')">
+                                        <button type="submit" class="btn btn-sm btn-danger" style="border-radius:8px;" onclick="return confirm('Tolak izin ini?')">
                                             ✗ Reject
                                         </button>
                                     </form>

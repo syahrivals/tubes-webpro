@@ -14,29 +14,30 @@ class DashboardController extends Controller
         $mahasiswa = $user->mahasiswa;
         
         $matkuls = $mahasiswa->matkuls;
-        
+
+        // Mata kuliah hari ini
+        $todayName = strtolower(now()->locale('id')->isoFormat('dddd'));
+        $todaysMatkuls = $matkuls->filter(function ($m) use ($todayName) {
+            return $m->hari && strtolower($m->hari) === $todayName;
+        });
+
         $selectedMatkulId = $request->get('matkul_id');
-        
         if (!$selectedMatkulId && $matkuls->count() > 0) {
             $selectedMatkulId = $matkuls->first()->id;
         }
-        
+
         $selectedData = null;
-        
         if ($selectedMatkulId) {
             $selectedMatkul = $matkuls->firstWhere('id', $selectedMatkulId);
-            
             if ($selectedMatkul) {
                 $allPresences = Presence::where('matkul_id', $selectedMatkul->id)
                     ->where('mahasiswa_id', $mahasiswa->id)
                     ->orderBy('tanggal', 'desc')
                     ->get();
-                
                 $hadir = 0;
                 $izin = 0;
                 $sakit = 0;
                 $alpha = 0;
-                
                 foreach ($allPresences as $presence) {
                     if ($presence->status == 'hadir') {
                         $hadir++;
@@ -48,14 +49,12 @@ class DashboardController extends Controller
                         $alpha++;
                     }
                 }
-                
                 $total = count($allPresences);
                 if ($total > 0) {
                     $percentage = round(($hadir / $total) * 100, 2);
                 } else {
                     $percentage = 0;
                 }
-                
                 $selectedData = [
                     'matkul' => $selectedMatkul,
                     'hadir' => $hadir,
@@ -69,7 +68,7 @@ class DashboardController extends Controller
             }
         }
 
-        return view('mahasiswa.dashboard', compact('mahasiswa', 'matkuls', 'selectedData', 'selectedMatkulId'));
+        return view('mahasiswa.dashboard', compact('mahasiswa', 'matkuls', 'selectedData', 'selectedMatkulId', 'todaysMatkuls'));
     }
 
     public function profile()

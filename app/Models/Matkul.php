@@ -13,6 +13,8 @@ class Matkul extends Model
         'kode',
         'nama',
         'dosen_id',
+        'hari',
+        'jam',
         'semester',
         'credits',
     ];

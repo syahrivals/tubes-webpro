@@ -17,10 +17,12 @@ class Presence extends Model
         'status',
         'note',
         'recorded_by',
+        'locked',
     ];
 
     protected $casts = [
         'tanggal' => 'date',
+        'locked' => 'boolean',
     ];
 
     public function matkul()
