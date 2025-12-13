@@ -7,54 +7,157 @@
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/university.css'])
 
     <style>
+        :root {
+            --primary: #1d4ed8;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #06b6d4;
+            --light: #f8fafc;
+            --dark: #1e293b;
+        }
+
         .nav-premium {
-            background: linear-gradient(135deg, #3A7BD5 0%, #00D2FF 100%);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
+            box-shadow: 0 8px 32px rgba(30, 58, 138, 0.3);
         }
 
         body {
-            background: #f6f9fc !important;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%) !important;
             font-family: 'Inter', sans-serif;
+            min-height: 100vh;
         }
 
         .nav-link-custom {
             color: #ffffff !important;
             opacity: 0.95;
             font-weight: 500;
-            transition: 0.25s;
+            transition: 0.3s ease;
         }
 
         .nav-link-custom:hover {
             opacity: 1;
             transform: translateY(-2px);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .navbar-brand {
             font-weight: 700 !important;
             letter-spacing: 0.4px;
+            color: #1e40af !important;
         }
 
         .card-premium {
-            background: #ffffff;
-            border: none;
-            border-radius: 14px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-            padding: 20px;
+            background: linear-gradient(145deg, #ffffff 0%, #f0f9ff 100%);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.15);
+            padding: 24px;
+            backdrop-filter: blur(10px);
         }
 
         .alert {
             border-radius: 12px !important;
+            border: none !important;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.1);
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%) !important;
+            border: none !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 16px rgba(29, 78, 216, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(29, 78, 216, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important;
+            border: none !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 16px rgba(100, 116, 139, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(100, 116, 139, 0.4);
         }
 
         .btn-logout {
             color: #fff !important;
             font-weight: 500;
-            transition: 0.25s;
+            transition: 0.3s ease;
         }
 
         .btn-logout:hover {
             opacity: 1;
             transform: translateY(-2px);
+        }
+
+        .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-label {
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 16px 0;
+            box-shadow: 0 4px 20px rgba(30, 58, 138, 0.2);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 16px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav a:hover, .nav a.active {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
         }
     </style>
 </head>
