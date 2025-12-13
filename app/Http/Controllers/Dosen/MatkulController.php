@@ -9,8 +9,7 @@ class MatkulController extends Controller
 {
     public function create()
     {
-        $allMahasiswas = \App\Models\Mahasiswa::with('user')->get();
-        return view('dosen.matkul-form', compact('allMahasiswas'));
+        return view('dosen.matkul-form');
     }
 
     public function store(\Illuminate\Http\Request $request)
@@ -19,9 +18,9 @@ class MatkulController extends Controller
             'kode' => 'required',
             'nama' => 'required',
             'hari' => 'required',
+            'jam' => 'required',
             'semester' => 'required|integer',
             'credits' => 'required|integer',
-            'mahasiswas' => 'required|array',
         ]);
         $matkul = \App\Models\Matkul::create([
             'kode' => $request->kode,
@@ -32,15 +31,13 @@ class MatkulController extends Controller
             'credits' => $request->credits,
             'dosen_id' => auth()->id(),
         ]);
-        $matkul->mahasiswas()->sync($request->mahasiswas);
         return redirect()->route('dosen.dashboard')->with('success', 'Mata kuliah berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
-        $matkul = \App\Models\Matkul::with('mahasiswas')->findOrFail($id);
-        $allMahasiswas = \App\Models\Mahasiswa::with('user')->get();
-        return view('dosen.matkul-form', compact('matkul', 'allMahasiswas'));
+        $matkul = \App\Models\Matkul::findOrFail($id);
+        return view('dosen.matkul-form', compact('matkul'));
     }
 
     public function update(\Illuminate\Http\Request $request, $id)
@@ -49,9 +46,9 @@ class MatkulController extends Controller
             'kode' => 'required',
             'nama' => 'required',
             'hari' => 'required',
+            'jam' => 'required',
             'semester' => 'required|integer',
             'credits' => 'required|integer',
-            'mahasiswas' => 'required|array',
         ]);
         $matkul = \App\Models\Matkul::findOrFail($id);
         $matkul->update([
@@ -62,7 +59,6 @@ class MatkulController extends Controller
             'semester' => $request->semester,
             'credits' => $request->credits,
         ]);
-        $matkul->mahasiswas()->sync($request->mahasiswas);
         return redirect()->route('dosen.dashboard')->with('success', 'Mata kuliah berhasil diperbarui.');
     }
 

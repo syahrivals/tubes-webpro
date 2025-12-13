@@ -57,6 +57,8 @@ class DatabaseSeeder extends Seeder
             'kode' => 'MK001',
             'nama' => 'Pemrograman Web',
             'dosen_id' => $dosen->id,
+            'hari' => 'Senin',
+            'jam' => '08:00-10:00',
             'semester' => 5,
             'credits' => 3,
         ]);
@@ -65,7 +67,19 @@ class DatabaseSeeder extends Seeder
             'kode' => 'MK002',
             'nama' => 'Basis Data',
             'dosen_id' => $dosen->id,
+            'hari' => 'Rabu',
+            'jam' => '10:00-12:00',
             'semester' => 4,
+            'credits' => 3,
+        ]);
+
+        $matkul3 = Matkul::create([
+            'kode' => 'MK003',
+            'nama' => 'Algoritma dan Struktur Data',
+            'dosen_id' => $dosen->id,
+            'hari' => 'Jumat',
+            'jam' => '13:00-15:00',
+            'semester' => 3,
             'credits' => 3,
         ]);
 
@@ -74,10 +88,12 @@ class DatabaseSeeder extends Seeder
             Enrollment::create([
                 'mahasiswa_id' => $mhs->id,
                 'matkul_id' => $matkul1->id,
+                'status' => 'approved',
             ]);
             Enrollment::create([
                 'mahasiswa_id' => $mhs->id,
                 'matkul_id' => $matkul2->id,
+                'status' => 'approved',
             ]);
         }
 

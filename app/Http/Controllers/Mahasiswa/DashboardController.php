@@ -95,5 +95,45 @@ class DashboardController extends Controller
 
         return redirect()->route('mahasiswa.profile')->with('success', 'Profil berhasil diperbarui');
     }
+
+    public function enrollments()
+    {
+        $user = auth()->user();
+        $mahasiswa = $user->mahasiswa;
+        
+        // Get all available matkul
+        $availableMatkuls = \App\Models\Matkul::all();
+        
+        // Get current enrollments (pending, approved, rejected)
+        $enrollments = \App\Models\Enrollment::where('mahasiswa_id', $mahasiswa->id)
+            ->with('matkul')
+            ->get();
+
+        return view('mahasiswa.enrollments', compact('availableMatkuls', 'enrollments'));
+    }
+
+    public function requestEnrollment(\App\Models\Matkul $matkul)
+    {
+        $user = auth()->user();
+        $mahasiswa = $user->mahasiswa;
+        
+        // Check if already enrolled or requested
+        $existing = \App\Models\Enrollment::where('mahasiswa_id', $mahasiswa->id)
+            ->where('matkul_id', $matkul->id)
+            ->first();
+            
+        if ($existing) {
+            return back()->with('error', 'Anda sudah mengajukan permintaan untuk mata kuliah ini');
+        }
+        
+        // Create enrollment request
+        \App\Models\Enrollment::create([
+            'mahasiswa_id' => $mahasiswa->id,
+            'matkul_id' => $matkul->id,
+            'status' => 'pending'
+        ]);
+        
+        return back()->with('success', 'Permintaan enrollment berhasil diajukan');
+    }
 }
 

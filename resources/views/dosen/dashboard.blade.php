@@ -7,7 +7,7 @@
 
 <!-- ===== TABEL NOTIFIKASI IZIN MAHASISWA ===== -->
 @if(isset($notifications) && $notifications->count() > 0)
-<div class="card shadow-sm mb-4">
+<div class="card shadow-sm mb-4 animate-slideInTop">
     <div class="card-body">
         <h5 class="mb-3" style="font-weight:700;">Notifikasi Izin Mahasiswa</h5>
         <div class="table-responsive">
@@ -54,29 +54,29 @@
 </div>
 @endif
 
-<div class="mb-4 d-flex justify-content-between align-items-center">
+<div class="mb-4 d-flex justify-content-between align-items-center animate-fadeInUp">
     <div>
         <h1 class="display-5" style="font-weight:800;color:var(--primary);">Dashboard Dosen</h1>
         <p style="color:var(--text-soft);">Selamat datang, {{ auth()->user()->name }}</p>
     </div>
 
     <div class="d-flex gap-2">
-    <a href="{{ route('dosen.matkuls.create') }}" class="btn btn-primary">
+    <a href="{{ route('dosen.matkuls.create') }}" class="btn btn-primary animate-bounceIn animate-delay-100">
             Tambah Mata Kuliah
         </a>
-        <a href="{{ route('dosen.izin.index') }}" class="btn btn-secondary">
+        <a href="{{ route('dosen.izin.index') }}" class="btn btn-secondary animate-bounceIn animate-delay-200">
             Validasi Izin
         </a>
-        <a href="{{ route('dosen.qr-code') }}" class="btn btn-success">
+        <a href="{{ route('dosen.qr-code') }}" class="btn btn-success animate-bounceIn animate-delay-300">
             Absen dengan QR Code
         </a>
     </div>
 </div>
 
 @if(isset($todaysMatkuls) && $todaysMatkuls->count() > 0)
-<div class="card mb-4">
+<div class="card mb-4 animate-slideInLeft">
     <h2 class="mb-3" style="font-weight:700;color:var(--primary);">Mata Kuliah Hari Ini</h2>
-    <div class="row">
+    <div class="row stagger-children">
         @foreach($todaysMatkuls as $m)
         <div class="col-md-6 mb-3">
             <div class="p-3 border rounded shadow-sm">
@@ -98,10 +98,10 @@
 </div>
 @endif
 
-<div class="card mb-4">
+<div class="card mb-4 animate-slideInRight">
     <h2 class="mb-4" style="font-weight:700;color:var(--primary);">Statistik</h2>
 
-    <div class="row mb-4">
+    <div class="row mb-4 stagger-children">
         <div class="col-md-4 mb-3">
             <div class="card shadow-sm text-white" style="background:var(--primary);border-radius:20px;">
                 <p class="mb-1">Total Mata Kuliah</p>
@@ -119,11 +119,11 @@
 
     @if(count($chartLabels) > 0)
     <h3 class="mt-3 mb-3" style="font-weight:700;color:var(--primary);">Grafik Persentase Kehadiran per Mata Kuliah</h3>
-        <canvas id="attendanceChart" style="max-height: 360px;"></canvas>
+        <canvas id="attendanceChart" style="max-height: 360px;" class="animate-zoomIn animate-delay-300"></canvas>
     @endif
 </div>
 
-<div class="card">
+<div class="card animate-scaleInCenter">
     <h2 class="mb-4" style="font-weight:700;color:var(--primary);">Mata Kuliah</h2>
 
     <div class="table-responsive">

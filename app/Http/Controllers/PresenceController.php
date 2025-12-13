@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Matkul;
 use App\Models\Presence;
+use App\Notifications\AttendanceMarked;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class PresenceController extends Controller
 {
@@ -69,18 +71,21 @@ class PresenceController extends Controller
                 ->where('tanggal', $request->tanggal)
                 ->first();
             
+            $isNew = false;
             if ($existingPresence) {
                 // if locked (e.g. validated by dosen), do not overwrite
                 if ($existingPresence->locked) {
                     continue;
                 }
 
+                $oldStatus = $existingPresence->status;
                 $existingPresence->status = $presenceData['status'];
                 if (isset($presenceData['note'])) {
                     $existingPresence->note = $presenceData['note'];
                 }
                 $existingPresence->recorded_by = auth()->id();
                 $existingPresence->save();
+                $presence = $existingPresence;
             } else {
                 $newPresence = new Presence();
                 $newPresence->matkul_id = $request->matkul_id;
@@ -93,6 +98,16 @@ class PresenceController extends Controller
                 $newPresence->recorded_by = auth()->id();
                 $newPresence->locked = false;
                 $newPresence->save();
+                $presence = $newPresence;
+                $isNew = true;
+            }
+
+            // Send notification to student if status changed or new attendance
+            if ($isNew || ($existingPresence && $oldStatus !== $presenceData['status'])) {
+                $mahasiswa = $presence->mahasiswa;
+                if ($mahasiswa && $mahasiswa->user) {
+                    $mahasiswa->user->notify(new AttendanceMarked($presence, $matkul));
+                }
             }
         }
 

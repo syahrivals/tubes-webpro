@@ -36,20 +36,6 @@
                     <label for="credits" class="form-label">SKS</label>
                     <input type="number" class="form-control" name="credits" id="credits" value="{{ old('credits', $matkul->credits ?? '') }}" required>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Pilih Mahasiswa yang Mengikuti Mata Kuliah (bisa lebih dari satu):</label>
-                    <div class="border rounded p-2" style="max-height:300px;overflow-y:auto;">
-                        @foreach($allMahasiswas as $m)
-                        <div class="form-check mb-1">
-                            <input class="form-check-input" type="checkbox" name="mahasiswas[]" value="{{ $m->id }}" id="mhs{{ $m->id }}"
-                                {{ (isset($matkul) && $matkul->mahasiswas->contains($m->id)) ? 'checked' : '' }}>
-                            <label class="form-check-label" for="mhs{{ $m->id }}">
-                                {{ $m->user->name }} ({{ $m->nim }})
-                            </label>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
                 <button type="submit" class="btn btn-primary" style="border-radius:10px;font-weight:600;">Simpan</button>
                 <a href="{{ route('dosen.dashboard') }}" class="btn btn-secondary" style="border-radius:10px;font-weight:600;">Batal</a>
             </form>

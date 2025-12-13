@@ -27,7 +27,12 @@ class Mahasiswa extends Model
 
     public function matkuls()
     {
-        return $this->belongsToMany(Matkul::class, 'enrollments');
+        return $this->belongsToMany(Matkul::class, 'enrollments')->wherePivot('status', 'approved');
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
     }
 
     public function presences()

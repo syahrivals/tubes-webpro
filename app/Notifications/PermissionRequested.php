@@ -8,23 +8,34 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Models\Izin;
 
-class IzinSubmitted extends Notification implements ShouldQueue
+class PermissionRequested extends Notification implements ShouldQueue
 {
     use Queueable;
 
     protected $izin;
 
+    /**
+     * Create a new notification instance.
+     */
     public function __construct(Izin $izin)
     {
         $this->izin = $izin;
     }
 
-    public function via($notifiable)
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
     {
         return ['mail', 'database'];
     }
 
-    public function toMail($notifiable)
+    /**
+     * Get the mail representation of the notification.
+     */
+    public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
             ->subject("Permohonan Izin Baru - {$this->izin->mahasiswa->user->name}")
@@ -33,7 +44,7 @@ class IzinSubmitted extends Notification implements ShouldQueue
             ->line("**Mata Kuliah:** {$this->izin->matkul->nama}")
             ->line("**Tanggal:** " . \Carbon\Carbon::parse($this->izin->tanggal)->format('d/m/Y'))
             ->line("**Alasan:** {$this->izin->alasan}")
-            ->when($this->izin->bukti_file, function ($mail) {
+            ->when($this->izin->bukti, function ($mail) {
                 return $mail->line("**Bukti:** Dilampirkan");
             })
             ->action('Tinjau Permohonan', route('dosen.izin.index'))
@@ -41,7 +52,12 @@ class IzinSubmitted extends Notification implements ShouldQueue
             ->salutation('Salam, Sistem Presensi');
     }
 
-    public function toDatabase($notifiable)
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
     {
         return [
             'type' => 'permission_requested',

@@ -13,6 +13,7 @@ class Enrollment extends Model
     protected $fillable = [
         'mahasiswa_id',
         'matkul_id',
+        'status',
     ];
 
     public function mahasiswa()

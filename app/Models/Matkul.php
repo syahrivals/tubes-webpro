@@ -28,11 +28,11 @@ class Matkul extends Model
     }
 
     /**
-     * Mahasiswa yang mengambil mata kuliah (pivot: enrollments)
+     * Mahasiswa yang mengambil mata kuliah (pivot: enrollments) - hanya yang approved
      */
     public function mahasiswas()
     {
-        return $this->belongsToMany(Mahasiswa::class, 'enrollments');
+        return $this->belongsToMany(Mahasiswa::class, 'enrollments')->wherePivot('status', 'approved');
     }
 
     /**
@@ -41,6 +41,14 @@ class Matkul extends Model
     public function presences()
     {
         return $this->hasMany(Presence::class);
+    }
+
+    /**
+     * Enrollments terkait mata kuliah
+     */
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Matkul;
 use App\Models\Enrollment;
 use App\Models\Presence;
+use App\Notifications\EnrollmentApproved;
 
 class DashboardController extends Controller
 {
@@ -20,7 +21,7 @@ class DashboardController extends Controller
         $mahasiswaIds = [];
         
         foreach ($matkuls as $matkul) {
-            $enrollments = Enrollment::where('matkul_id', $matkul->id)->get();
+            $enrollments = Enrollment::where('matkul_id', $matkul->id)->where('status', 'approved')->get();
             
             foreach ($enrollments as $enrollment) {
                 if (!in_array($enrollment->mahasiswa_id, $mahasiswaIds)) {
@@ -36,7 +37,7 @@ class DashboardController extends Controller
         $mahasiswaCounts = [];
         
         foreach ($matkuls as $matkul) {
-            $enrollments = Enrollment::where('matkul_id', $matkul->id)->get();
+            $enrollments = Enrollment::where('matkul_id', $matkul->id)->where('status', 'approved')->get();
             $mahasiswaCounts[$matkul->id] = count($enrollments);
             
             $allPresences = Presence::where('matkul_id', $matkul->id)->get();
@@ -94,6 +95,53 @@ class DashboardController extends Controller
         $expiresAtTimestamp = $expiresAt->timestamp * 1000;
 
         return view('dosen.qr-code', compact('token', 'expiresAt', 'expiresAtTimestamp', 'matkulId', 'matkuls'));
+    }
+
+    public function enrollmentRequests()
+    {
+        $user = auth()->user();
+        $matkuls = \App\Models\Matkul::where('dosen_id', $user->id)->get();
+        
+        $enrollmentRequests = \App\Models\Enrollment::whereHas('matkul', function($query) use ($user) {
+            $query->where('dosen_id', $user->id);
+        })
+        ->where('status', 'pending')
+        ->with(['mahasiswa.user', 'matkul'])
+        ->get();
+
+        return view('dosen.enrollment-requests', compact('enrollmentRequests', 'matkuls'));
+    }
+
+    public function approveEnrollment(\App\Models\Enrollment $enrollment)
+    {
+        // Check if the dosen owns this matkul
+        $user = auth()->user();
+        if ($enrollment->matkul->dosen_id !== $user->id) {
+            abort(403);
+        }
+        
+        $enrollment->update(['status' => 'approved']);
+
+        // Send notification to student
+        $mahasiswa = $enrollment->mahasiswa;
+        if ($mahasiswa && $mahasiswa->user) {
+            $mahasiswa->user->notify(new EnrollmentApproved($enrollment));
+        }
+        
+        return back()->with('success', 'Enrollment request approved');
+    }
+
+    public function rejectEnrollment(\App\Models\Enrollment $enrollment)
+    {
+        // Check if the dosen owns this matkul
+        $user = auth()->user();
+        if ($enrollment->matkul->dosen_id !== $user->id) {
+            abort(403);
+        }
+        
+        $enrollment->update(['status' => 'rejected']);
+        
+        return back()->with('success', 'Enrollment request rejected');
     }
 }
 

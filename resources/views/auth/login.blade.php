@@ -7,7 +7,7 @@
     <div class="card shadow" style="max-width:400px;width:100%;border-radius:18px;">
         <div class="card-body p-5">
             <div class="text-center mb-4">
-                <img src="/favicon.ico" alt="Logo" style="height:48px;">
+                <!-- <img src="/favicon.ico" alt="Logo" style="height:48px;"> -->
                 <h1 class="mt-2 mb-0" style="font-weight:700;color:var(--primary);">Login</h1>
             </div>
             <form method="POST" action="{{ route('login') }}">
